@@ -1,0 +1,389 @@
+{
+  "version": 4,
+  "sources": [
+    {
+      "id": "behance",
+      "name": "Behance Featured",
+      "site": "https://www.behance.net",
+      "feedUrl": "https://feeds.feedburner.com/behance/vorr",
+      "categories": [
+        "design"
+      ],
+      "preselected": true
+    },
+    {
+      "id": "dribbble",
+      "name": "Dribbble Stories",
+      "site": "https://dribbble.com",
+      "feedUrl": "https://dribbble.com/stories/feed",
+      "categories": [
+        "design"
+      ],
+      "preselected": true
+    },
+    {
+      "id": "awwwards",
+      "name": "Awwwards",
+      "site": "https://www.awwwards.com",
+      "feedUrl": "https://www.awwwards.com/feed/",
+      "categories": [
+        "design",
+        "interaction"
+      ],
+      "preselected": true
+    },
+    {
+      "id": "codrops",
+      "name": "Codrops",
+      "site": "https://tympanus.net/codrops",
+      "feedUrl": "https://tympanus.net/codrops/feed/",
+      "categories": [
+        "design",
+        "interaction"
+      ],
+      "preselected": true
+    },
+    {
+      "id": "godly",
+      "name": "godly",
+      "site": "https://godly.website",
+      "feedUrl": "https://godly.website/feed.xml",
+      "categories": [
+        "interaction"
+      ],
+      "preselected": true
+    },
+    {
+      "id": "typewolf",
+      "name": "Typewolf",
+      "site": "https://www.typewolf.com",
+      "feedUrl": "https://www.typewolf.com/blog/feed",
+      "categories": [
+        "typography"
+      ],
+      "preselected": true
+    },
+    {
+      "id": "fontsinuse",
+      "name": "Fonts In Use",
+      "site": "https://fontsinuse.com",
+      "feedUrl": "https://fontsinuse.com/blog.rss",
+      "categories": [
+        "typography"
+      ],
+      "preselected": true
+    },
+    {
+      "id": "velvetyne",
+      "name": "Velvetyne",
+      "site": "https://velvetyne.fr",
+      "feedUrl": "https://velvetyne.fr/feed.xml",
+      "categories": [
+        "typography"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "creativeboom",
+      "name": "Creative Boom",
+      "site": "https://www.creativeboom.com",
+      "feedUrl": "https://www.creativeboom.com/feed/",
+      "categories": [
+        "design"
+      ],
+      "preselected": true
+    },
+    {
+      "id": "design-milk",
+      "name": "Design Milk",
+      "site": "https://design-milk.com",
+      "feedUrl": "https://design-milk.com/feed/",
+      "categories": [
+        "design",
+        "arch"
+      ],
+      "preselected": true
+    },
+    {
+      "id": "onepagelove",
+      "name": "One Page Love",
+      "site": "https://onepagelove.com",
+      "feedUrl": "https://onepagelove.com/feed",
+      "categories": [
+        "design"
+      ],
+      "preselected": true
+    },
+    {
+      "id": "siteinspire",
+      "name": "SiteInspire",
+      "site": "https://www.siteinspire.com",
+      "feedUrl": "https://feeds.feedburner.com/Siteinspire",
+      "categories": [
+        "design"
+      ],
+      "preselected": true
+    },
+    {
+      "id": "designboom",
+      "name": "designboom",
+      "site": "https://www.designboom.com",
+      "feedUrl": "https://www.designboom.com/feed/",
+      "categories": [
+        "arch"
+      ],
+      "preselected": true
+    },
+    {
+      "id": "creativereview",
+      "name": "Creative Review",
+      "site": "https://www.creativereview.co.uk",
+      "feedUrl": "https://www.creativereview.co.uk/feed/",
+      "categories": [
+        "design"
+      ],
+      "preselected": true
+    },
+    {
+      "id": "colossal",
+      "name": "Colossal",
+      "site": "https://www.thisiscolossal.com",
+      "feedUrl": "https://www.thisiscolossal.com/feed/",
+      "categories": [
+        "design"
+      ],
+      "preselected": true
+    },
+    {
+      "id": "99designs",
+      "name": "99designs Blog",
+      "site": "https://99designs.com/blog",
+      "feedUrl": "https://99designs.com/blog/feed/",
+      "categories": [
+        "design"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "inspiration-grid",
+      "name": "Inspiration Grid",
+      "site": "https://theinspirationgrid.com",
+      "feedUrl": "https://theinspirationgrid.com/feed/",
+      "categories": [
+        "design"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "lapa-ninja",
+      "name": "Lapa Ninja",
+      "site": "https://www.lapa.ninja",
+      "feedUrl": "https://www.lapa.ninja/rss.xml",
+      "categories": [
+        "design"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "speckyboy",
+      "name": "Speckyboy",
+      "site": "https://speckyboy.com",
+      "feedUrl": "https://speckyboy.com/feed/",
+      "categories": [
+        "design"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "smashing",
+      "name": "Smashing Magazine",
+      "site": "https://www.smashingmagazine.com",
+      "feedUrl": "https://www.smashingmagazine.com/feed/",
+      "categories": [
+        "design"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "alistapart",
+      "name": "A List Apart",
+      "site": "https://alistapart.com",
+      "feedUrl": "https://alistapart.com/main/feed/",
+      "categories": [
+        "design"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "wdd",
+      "name": "Webdesigner Depot",
+      "site": "https://www.webdesignerdepot.com",
+      "feedUrl": "https://www.webdesignerdepot.com/feed/",
+      "categories": [
+        "design"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "noupe",
+      "name": "Noupe",
+      "site": "https://www.noupe.com",
+      "feedUrl": "https://www.noupe.com/feed",
+      "categories": [
+        "design"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "cssauthor",
+      "name": "CSS Author",
+      "site": "https://cssauthor.com",
+      "feedUrl": "https://cssauthor.com/feed/",
+      "categories": [
+        "design"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "tutsplus",
+      "name": "Tuts+ Design",
+      "site": "https://design.tutsplus.com",
+      "feedUrl": "https://design.tutsplus.com/posts.atom",
+      "categories": [
+        "design"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "designyoutrust",
+      "name": "Design You Trust",
+      "site": "https://designyoutrust.com",
+      "feedUrl": "https://designyoutrust.com/feed/",
+      "categories": [
+        "design"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "designyourway",
+      "name": "Design Your Way",
+      "site": "https://www.designyourway.net",
+      "feedUrl": "https://www.designyourway.net/blog/feed/",
+      "categories": [
+        "design"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "designtaxi",
+      "name": "Design Taxi",
+      "site": "https://designtaxi.com",
+      "feedUrl": "https://feeds.feedburner.com/dtaxi",
+      "categories": [
+        "design"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "justcreative",
+      "name": "Just Creative",
+      "site": "https://justcreative.com",
+      "feedUrl": "https://justcreative.com/feed/",
+      "categories": [
+        "design"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "spoongraphics",
+      "name": "Spoon Graphics",
+      "site": "https://blog.spoongraphics.co.uk",
+      "feedUrl": "https://blog.spoongraphics.co.uk/feed",
+      "categories": [
+        "design"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "abduzeedo",
+      "name": "Abduzeedo",
+      "site": "https://abduzeedo.com",
+      "feedUrl": "https://abduzeedo.com/rss.xml",
+      "categories": [
+        "design"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "booooooom",
+      "name": "Booooooom",
+      "site": "https://www.booooooom.com",
+      "feedUrl": "https://www.booooooom.com/feed/",
+      "categories": [
+        "design"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "printmag",
+      "name": "Print Magazine",
+      "site": "https://www.printmag.com",
+      "feedUrl": "https://www.printmag.com/feed/",
+      "categories": [
+        "design",
+        "typography"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "artstation",
+      "name": "ArtStation Magazine",
+      "site": "https://magazine.artstation.com",
+      "feedUrl": "https://magazine.artstation.com/feed/",
+      "categories": [
+        "design"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "dezeen",
+      "name": "Dezeen",
+      "site": "https://www.dezeen.com",
+      "feedUrl": "https://www.dezeen.com/feed/",
+      "categories": [
+        "arch"
+      ],
+      "preselected": true
+    },
+    {
+      "id": "home-designing",
+      "name": "Home Designing",
+      "site": "https://www.home-designing.com",
+      "feedUrl": "https://www.home-designing.com/feed",
+      "categories": [
+        "arch"
+      ],
+      "preselected": false
+    },
+    {
+      "id": "gradientflow",
+      "name": "Gradient Flow",
+      "site": "https://gradientflow.com",
+      "feedUrl": "https://gradientflow.com/feed/",
+      "categories": [
+        "ai"
+      ],
+      "preselected": true
+    },
+    {
+      "id": "stability",
+      "name": "Stability AI",
+      "site": "https://stability.ai",
+      "feedUrl": "https://stability.ai/news?format=rss",
+      "categories": [
+        "ai"
+      ],
+      "preselected": true
+    }
+  ]
+}

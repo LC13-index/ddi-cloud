@@ -1,0 +1,14 @@
+{
+  "updated": "2026-07-05T09:00:00Z",
+  "items": [
+    {
+      "id": "hl-2026-07-welcome",
+      "title": "REPLACE ME — this is your first pushed Highlight. Edit highlights.json (or use Pages CMS) and commit.",
+      "link": "https://example.com/your-article",
+      "image": "https://picsum.photos/seed/ddi/640/360",
+      "source": "Your Publication",
+      "publishedAt": "2026-07-05T09:00:00Z",
+      "pinnedUntil": "2026-09-01T00:00:00Z"
+    }
+  ]
+}
