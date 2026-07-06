@@ -9,6 +9,15 @@
       "source": "Admin",
       "publishedAt": "2026-07-05T09:00:00Z",
       "pinnedUntil": "2026-09-01T00:00:00Z"
+    },
+    {
+      "id": "hl-2026-07-BFM",
+      "title": "Built For Mars Figma Plugin",
+      "link": "https://docs.builtformars.com/Figma-overview",
+      "image": "https://mintcdn.com/builtformars/y3IfmEic8I_rwb-G/images/image.png?w=2500&fit=max&auto=format&n=y3IfmEic8I_rwb-G&q=85&s=f90fd1d50372fb1d333ace4ae1555f9b",
+      "source": "Sponsored",
+      "publishedAt": "2026-07-06T09:00:00Z",
+      "pinnedUntil": "2026-08-01T00:00:00Z"
     }
   ]
 }
