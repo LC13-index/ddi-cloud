@@ -1,0 +1,350 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>DDI — Collection Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --bg: #0b0c10; --fg: #e8e8e8; --muted: #a8a8a8;
+    --card: #14161a; --border: #22252b;
+    --accent: #ae9bff; --accent-ink: #12101c;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0 auto; max-width: 760px; padding: 32px 20px 80px; font: 15px/1.5 Inter, ui-sans-serif, system-ui; color: var(--fg); background: var(--bg); }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h2 { font-size: 15px; margin: 32px 0 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+  p.note { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+  label { display: block; font-size: 13px; font-weight: 600; margin: 14px 0 4px; }
+  input { width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--fg); font: inherit; font-size: 14px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  button { border: 1px solid var(--border); background: var(--card); color: var(--fg); padding: 9px 14px; border-radius: 12px; cursor: pointer; font: inherit; font-size: 14px; }
+  button:hover { border-color: #343945; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+  button:disabled { opacity: 0.4; cursor: default; }
+  .btnrow { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; align-items: center; }
+  .pick-row { display: flex; align-items: center; gap: 10px; border: 1px solid var(--border); border-radius: 12px; padding: 8px 12px; margin-bottom: 8px; background: rgba(255,255,255,0.02); }
+  .pick-row img, .pick-row video { width: 56px; height: 42px; object-fit: cover; border-radius: 8px; flex: none; background: #0f1115; }
+  .pick-row .info { flex: 1; min-width: 0; font-size: 13px; }
+  .pick-row .info .t { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pick-row .info .c { color: var(--muted); font-size: 12px; }
+  .pick-row button { padding: 5px 9px; font-size: 12px; border-radius: 9px; }
+  .status { font-size: 13px; margin-top: 8px; min-height: 1.4em; }
+  .ok { color: #7cfc9b; } .err { color: #ff8a8a; } .warn { color: #ffd27c; }
+  code { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; font-size: 12.5px; }
+  .drop {
+    border: 2px dashed var(--border); border-radius: 16px; padding: 28px 16px;
+    text-align: center; color: var(--muted); font-size: 14px; cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .drop:hover, .drop.over { border-color: var(--accent); background: rgba(174,155,255,0.05); color: var(--fg); }
+  .drop input { display: none; }
+  .file-chip { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 999px; font-size: 13px; }
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; border: 1px solid var(--border); color: var(--muted); }
+  .pill.on { border-color: #2e5c3a; color: #7cfc9b; }
+  .dirty-bar { position: sticky; bottom: 16px; display: none; align-items: center; gap: 12px; justify-content: space-between;
+    margin-top: 24px; padding: 12px 16px; border: 1px solid var(--accent); border-radius: 16px;
+    background: rgba(20,22,26,0.95); backdrop-filter: blur(8px); }
+  .dirty-bar.show { display: flex; }
+  details { margin-top: 10px; }
+  summary { cursor: pointer; font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+  <h1>Collection Admin</h1>
+  <p class="note">Publishes straight to GitHub — media upload and <code>picks.json</code> commit included. No copy-paste.</p>
+
+  <h2>Connection</h2>
+  <div class="btnrow" style="margin-top:0">
+    <span id="conn" class="pill">Not connected</span>
+    <button id="conn-btn">Set token…</button>
+  </div>
+  <div id="token-box" hidden>
+    <label>GitHub personal access token</label>
+    <input id="token" type="password" placeholder="github_pat_…" autocomplete="off" />
+    <div class="btnrow">
+      <button id="save-token" class="primary">Save & connect</button>
+      <button id="clear-token">Forget token</button>
+    </div>
+    <details>
+      <summary>How to create the token (one-time, ~2 min)</summary>
+      <p class="note" style="margin-top:8px">
+        GitHub → your avatar → <b>Settings</b> → <b>Developer settings</b> (bottom of left sidebar) →
+        <b>Personal access tokens → Fine-grained tokens</b> → <b>Generate new token</b>.<br><br>
+        Name it <code>DDI Admin</code>. Set expiration (1 year is fine — you'll paste a fresh one when it expires).
+        Under <b>Repository access</b> choose <b>Only select repositories → ddi-cloud</b>.
+        Under <b>Permissions → Repository permissions</b> set <b>Contents</b> to <b>Read and write</b>.
+        Generate, copy the <code>github_pat_…</code> string, paste it above.
+        It's stored only in this browser.
+      </p>
+    </details>
+  </div>
+  <p class="status" id="conn-status"></p>
+
+  <h2>1 · Add a pick</h2>
+  <div class="drop" id="drop">
+    Drop an image or mp4 here — or click to choose
+    <input id="file" type="file" accept=".jpg,.jpeg,.png,.webp,.mp4,.webm" />
+  </div>
+  <div id="file-info"></div>
+
+  <div class="row2">
+    <div>
+      <label>Title <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+      <input id="title" placeholder="e.g. Kinetic type study" />
+    </div>
+    <div>
+      <label>Credit <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+      <input id="credit" placeholder="e.g. Studio Dumbar" />
+    </div>
+  </div>
+  <label>Source link <span style="color:var(--muted);font-weight:400">(optional — where a click takes the user)</span></label>
+  <input id="link" placeholder="https://…" />
+
+  <div class="btnrow">
+    <button id="add" class="primary" disabled>Upload & add to Collection</button>
+  </div>
+  <p class="status" id="add-status"></p>
+
+  <h2>2 · Current Collection</h2>
+  <p class="note" id="load-status">Loading…</p>
+  <div id="list"></div>
+
+  <div class="dirty-bar" id="dirty-bar">
+    <span id="dirty-msg">Unpublished changes</span>
+    <button id="publish" class="primary">Publish to everyone</button>
+  </div>
+
+<script>
+const OWNER = "lc13-index", REPO = "ddi-cloud", BRANCH = "main";
+const API = `https://api.github.com/repos/${OWNER}/${REPO}/contents/`;
+const SITE = `https://${OWNER}.github.io/${REPO}/`;
+const TOKEN_KEY = "ddi.gh.token";
+const $ = s => document.querySelector(s);
+
+let token = localStorage.getItem(TOKEN_KEY) || "";
+let picks = [];
+let picksSha = null;      // sha of picks.json on GitHub (needed to update it)
+let pending = null;       // { file, name, type, w, h } waiting to be uploaded
+let dirty = false;
+
+/* ---------- helpers ---------- */
+const headers = () => ({ "Authorization": "Bearer " + token, "Accept": "application/vnd.github+json" });
+const b64ToUtf8 = b64 => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\n/g, "")), c => c.charCodeAt(0)));
+const utf8ToB64 = str => btoa(String.fromCharCode(...new TextEncoder().encode(str)));
+const slug = s => (s || "").toLowerCase().replace(/[^a-z0-9.]+/g, "-").replace(/^-|-$/g, "") || "pick";
+const typeOf = name => /\.(mp4|webm)$/i.test(name) ? "video" : /\.(jpe?g|png|webp)$/i.test(name) ? "image" : null;
+
+function fileToB64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(",")[1]);
+    r.onerror = () => rej(new Error("Couldn't read file"));
+    r.readAsDataURL(file);
+  });
+}
+
+function measure(file, type) {
+  return new Promise(res => {
+    const url = URL.createObjectURL(file);
+    if (type === "image") {
+      const img = new Image();
+      img.onload = () => { res({ w: img.naturalWidth, h: img.naturalHeight }); URL.revokeObjectURL(url); };
+      img.onerror = () => { res({}); URL.revokeObjectURL(url); };
+      img.src = url;
+    } else {
+      const v = document.createElement("video");
+      v.onloadedmetadata = () => { res({ w: v.videoWidth, h: v.videoHeight }); URL.revokeObjectURL(url); };
+      v.onerror = () => { res({}); URL.revokeObjectURL(url); };
+      v.src = url;
+    }
+  });
+}
+
+/* ---------- connection ---------- */
+function setConn(on, msg) {
+  $("#conn").textContent = on ? "Connected" : "Not connected";
+  $("#conn").classList.toggle("on", on);
+  $("#conn-status").innerHTML = msg || "";
+  $("#add").disabled = !on || !pending;
+  $("#publish").disabled = !on;
+}
+
+async function testConnection() {
+  if (!token) { setConn(false, ""); return; }
+  try {
+    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}`, { headers: headers() });
+    if (!res.ok) throw new Error(res.status === 401 ? "token rejected — it may have expired" : "HTTP " + res.status);
+    setConn(true, '<span class="ok">Token OK — publishing enabled.</span>');
+  } catch (e) {
+    setConn(false, '<span class="err">Connection failed: ' + e.message + '</span>');
+  }
+}
+
+$("#conn-btn").onclick = () => { $("#token-box").hidden = !$("#token-box").hidden; };
+$("#save-token").onclick = () => {
+  token = $("#token").value.trim();
+  localStorage.setItem(TOKEN_KEY, token);
+  $("#token").value = "";
+  $("#token-box").hidden = true;
+  testConnection().then(loadCurrent);
+};
+$("#clear-token").onclick = () => {
+  token = ""; localStorage.removeItem(TOKEN_KEY);
+  setConn(false, "Token removed from this browser.");
+};
+
+/* ---------- load current picks ---------- */
+async function loadCurrent() {
+  try {
+    if (token) {
+      const res = await fetch(API + "picks.json?ref=" + BRANCH, { headers: headers(), cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const data = await res.json();
+      picksSha = data.sha;
+      picks = (JSON.parse(b64ToUtf8(data.content)).items) || [];
+      $("#load-status").textContent = `Loaded ${picks.length} pick(s) from GitHub.`;
+    } else {
+      const res = await fetch(SITE + "picks.json?t=" + Date.now(), { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      picks = (await res.json()).items || [];
+      $("#load-status").innerHTML = `Loaded ${picks.length} pick(s) <span class="warn">(read-only — set a token to publish)</span>.`;
+    }
+  } catch (e) {
+    $("#load-status").innerHTML = '<span class="err">Could not load picks.json (' + e.message + ').</span>';
+    picks = [];
+  }
+  dirty = false;
+  renderList();
+}
+
+/* ---------- list ---------- */
+function markDirty() {
+  dirty = true;
+  $("#dirty-bar").classList.add("show");
+  $("#dirty-msg").textContent = "Unpublished changes — users don't see them yet.";
+}
+
+function renderList() {
+  const list = $("#list");
+  list.innerHTML = "";
+  if (!picks.length) list.innerHTML = '<p class="note">The Collection is empty.</p>';
+  picks.forEach((p, i) => {
+    const row = document.createElement("div");
+    row.className = "pick-row";
+    const thumb = p.type === "video" ? document.createElement("video") : document.createElement("img");
+    thumb.src = p.src; if (p.type === "video") thumb.muted = true;
+    const info = document.createElement("div");
+    info.className = "info";
+    info.innerHTML = `<div class="t">${p.title || p.src.split("/").pop()}</div><div class="c">${p.type}${p.w ? ` · ${p.w}×${p.h}` : ""}${p.credit ? " · " + p.credit : ""}</div>`;
+    const up = document.createElement("button"); up.textContent = "↑";
+    const down = document.createElement("button"); down.textContent = "↓";
+    const del = document.createElement("button"); del.textContent = "✕";
+    up.onclick = () => { if (i > 0) { [picks[i-1], picks[i]] = [picks[i], picks[i-1]]; markDirty(); renderList(); } };
+    down.onclick = () => { if (i < picks.length - 1) { [picks[i+1], picks[i]] = [picks[i], picks[i+1]]; markDirty(); renderList(); } };
+    del.onclick = () => { picks.splice(i, 1); markDirty(); renderList(); };
+    row.append(thumb, info, up, down, del);
+    list.appendChild(row);
+  });
+  $("#dirty-bar").classList.toggle("show", dirty);
+}
+
+/* ---------- file selection ---------- */
+const drop = $("#drop");
+drop.onclick = () => $("#file").click();
+drop.ondragover = e => { e.preventDefault(); drop.classList.add("over"); };
+drop.ondragleave = () => drop.classList.remove("over");
+drop.ondrop = e => { e.preventDefault(); drop.classList.remove("over"); if (e.dataTransfer.files[0]) chooseFile(e.dataTransfer.files[0]); };
+$("#file").onchange = e => { if (e.target.files[0]) chooseFile(e.target.files[0]); };
+
+async function chooseFile(file) {
+  const type = typeOf(file.name);
+  const status = $("#add-status");
+  if (!type) { status.innerHTML = '<span class="err">Unsupported format — use jpg/png/webp or mp4/webm.</span>'; return; }
+  if (/\.gif$/i.test(file.name)) return; // accept attr blocks these anyway
+  const mb = file.size / 1048576;
+  const dims = await measure(file, type);
+  pending = { file, name: slug(file.name), type, ...dims };
+  $("#file-info").innerHTML = `<span class="file-chip">${pending.name} · ${type}${dims.w ? ` · ${dims.w}×${dims.h}` : ""} · ${mb.toFixed(1)} MB</span>`
+    + (mb > 15 ? ' <span class="warn" style="font-size:12.5px">Quite heavy for a new-tab page — consider compressing.</span>' : "");
+  status.textContent = "";
+  $("#add").disabled = !token;
+}
+
+/* ---------- upload + add ---------- */
+async function putFile(path, contentB64, message, sha) {
+  const body = { message, content: contentB64, branch: BRANCH };
+  if (sha) body.sha = sha;
+  const res = await fetch(API + path, { method: "PUT", headers: { ...headers(), "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || "HTTP " + res.status);
+  }
+  return res.json();
+}
+
+async function freeName(name) {
+  // If a file with this name already exists in /media, add a short suffix.
+  const res = await fetch(API + "media/" + encodeURIComponent(name) + "?ref=" + BRANCH, { headers: headers() });
+  if (res.status === 404) return name;
+  const dot = name.lastIndexOf(".");
+  return name.slice(0, dot) + "-" + Date.now().toString(36) + name.slice(dot);
+}
+
+$("#add").onclick = async () => {
+  if (!pending || !token) return;
+  const status = $("#add-status");
+  const btn = $("#add");
+  btn.disabled = true;
+  try {
+    status.textContent = "Uploading media to GitHub…";
+    const name = await freeName(pending.name);
+    const b64 = await fileToB64(pending.file);
+    await putFile("media/" + name, b64, "Add media: " + name);
+    const title = $("#title").value.trim();
+    const entry = {
+      id: "pick-" + slug(title || name).slice(0, 40) + "-" + Date.now().toString(36),
+      type: pending.type,
+      src: SITE + "media/" + name,
+      title,
+      credit: $("#credit").value.trim(),
+      link: $("#link").value.trim()
+    };
+    if (pending.w && pending.h) { entry.w = pending.w; entry.h = pending.h; }
+    picks.unshift(entry);
+    pending = null;
+    $("#file-info").innerHTML = "";
+    ["#title", "#credit", "#link"].forEach(s => $(s).value = "");
+    $("#file").value = "";
+    status.innerHTML = '<span class="ok">Uploaded ✓ — now hit “Publish to everyone” below.</span>';
+    markDirty();
+    renderList();
+  } catch (e) {
+    status.innerHTML = '<span class="err">Upload failed: ' + e.message + '</span>';
+    btn.disabled = false;
+  }
+};
+
+/* ---------- publish ---------- */
+$("#publish").onclick = async () => {
+  const btn = $("#publish");
+  btn.disabled = true;
+  $("#dirty-msg").textContent = "Publishing…";
+  try {
+    const json = JSON.stringify({ version: 1, items: picks }, null, 2) + "\n";
+    const res = await putFile("picks.json", utf8ToB64(json), "Update Collection (" + picks.length + " picks)", picksSha);
+    picksSha = res.content.sha;
+    dirty = false;
+    $("#dirty-msg").innerHTML = '<span class="ok">Published ✓ — live for everyone within a minute or two.</span>';
+    setTimeout(() => $("#dirty-bar").classList.remove("show"), 4000);
+  } catch (e) {
+    $("#dirty-msg").innerHTML = '<span class="err">Publish failed: ' + e.message + '</span>';
+  }
+  btn.disabled = false;
+};
+
+/* ---------- init ---------- */
+testConnection().then(loadCurrent);
+</script>
+</body>
+</html>
