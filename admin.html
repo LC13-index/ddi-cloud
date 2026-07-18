@@ -101,6 +101,17 @@
   <label>Source link <span style="color:var(--muted);font-weight:400">(optional — where a click takes the user)</span></label>
   <input id="link" placeholder="https://…" />
 
+  <label>Tags <span style="color:var(--muted);font-weight:400">(optional, comma-separated — for future search, users never see them)</span></label>
+  <input id="tags" placeholder="e.g. logo, branding, animation" />
+
+  <label>Avatar / logo <span style="color:var(--muted);font-weight:400">(optional — small circular image next to the caption)</span></label>
+  <div class="btnrow" style="margin-top:4px">
+    <input id="avatar-url" placeholder="paste an image URL…" style="flex:1; min-width: 200px" />
+    <button id="avatar-pick" type="button">…or upload</button>
+    <input id="avatar-file" type="file" accept=".jpg,.jpeg,.png,.webp" style="display:none" />
+    <span id="avatar-chip"></span>
+  </div>
+
   <div class="btnrow">
     <button id="add" class="primary" disabled>Upload & add to Collection</button>
   </div>
@@ -125,7 +136,8 @@ const $ = s => document.querySelector(s);
 let token = localStorage.getItem(TOKEN_KEY) || "";
 let picks = [];
 let picksSha = null;      // sha of picks.json on GitHub (needed to update it)
-let pending = null;       // { file, name, type, w, h } waiting to be uploaded
+let pending = null;       // { file, name, type, w, h } or { remote: true, ... } when editing
+let avatarFile = null;    // avatar image waiting to be uploaded
 let dirty = false;
 
 /* ---------- helpers ---------- */
@@ -236,17 +248,44 @@ function renderList() {
     thumb.src = p.src; if (p.type === "video") thumb.muted = true;
     const info = document.createElement("div");
     info.className = "info";
-    info.innerHTML = `<div class="t">${p.title || p.src.split("/").pop()}</div><div class="c">${p.type}${p.w ? ` · ${p.w}×${p.h}` : ""}${p.credit ? " · " + p.credit : ""}</div>`;
+    info.innerHTML = `<div class="t">${p.title || p.src.split("/").pop()}</div><div class="c">${p.type}${p.w ? ` · ${p.w}×${p.h}` : ""}${p.credit ? " · " + p.credit : ""}${p.tags?.length ? " · 🏷 " + p.tags.join(", ") : ""}</div>`;
+    const edit = document.createElement("button"); edit.textContent = "✎";
     const up = document.createElement("button"); up.textContent = "↑";
     const down = document.createElement("button"); down.textContent = "↓";
     const del = document.createElement("button"); del.textContent = "✕";
+    edit.onclick = () => editPick(i);
     up.onclick = () => { if (i > 0) { [picks[i-1], picks[i]] = [picks[i], picks[i-1]]; markDirty(); renderList(); } };
     down.onclick = () => { if (i < picks.length - 1) { [picks[i+1], picks[i]] = [picks[i], picks[i+1]]; markDirty(); renderList(); } };
     del.onclick = () => { picks.splice(i, 1); markDirty(); renderList(); };
-    row.append(thumb, info, up, down, del);
+    row.append(thumb, info, edit, up, down, del);
     list.appendChild(row);
   });
   $("#dirty-bar").classList.toggle("show", dirty);
+}
+
+$("#avatar-pick").onclick = () => $("#avatar-file").click();
+$("#avatar-file").onchange = e => {
+  avatarFile = e.target.files[0] || null;
+  $("#avatar-chip").innerHTML = avatarFile ? `<span class="file-chip">${avatarFile.name}</span>` : "";
+  if (avatarFile) $("#avatar-url").value = "";
+};
+
+function editPick(i) {
+  const p = picks.splice(i, 1)[0];
+  // Media already lives on GitHub — no re-upload needed.
+  pending = { remote: true, type: p.type, src: p.src, w: p.w, h: p.h, id: p.id };
+  $("#title").value = p.title || "";
+  $("#credit").value = p.credit || "";
+  $("#link").value = p.link || "";
+  $("#tags").value = (p.tags || []).join(", ");
+  $("#avatar-url").value = p.avatar || "";
+  avatarFile = null; $("#avatar-chip").innerHTML = "";
+  $("#file-info").innerHTML = `<span class="file-chip">✎ editing: ${p.src.split("/").pop()}</span>`;
+  $("#add").textContent = "Save changes";
+  $("#add").disabled = !token;
+  markDirty();
+  renderList();
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 /* ---------- file selection ---------- */
@@ -297,30 +336,49 @@ $("#add").onclick = async () => {
   const btn = $("#add");
   btn.disabled = true;
   try {
-    status.textContent = "Uploading media to GitHub…";
-    const name = await freeName(pending.name);
-    const b64 = await fileToB64(pending.file);
-    await putFile("media/" + name, b64, "Add media: " + name);
+    let src = pending.src;
+    if (!pending.remote) {
+      status.textContent = "Uploading media to GitHub…";
+      const name = await freeName(pending.name);
+      const b64 = await fileToB64(pending.file);
+      await putFile("media/" + name, b64, "Add media: " + name);
+      src = SITE + "media/" + name;
+    }
+
+    // Avatar: uploaded file wins over pasted URL.
+    let avatar = $("#avatar-url").value.trim();
+    if (avatarFile) {
+      status.textContent = "Uploading avatar…";
+      const aname = await freeName("avatar-" + slug(avatarFile.name));
+      const ab64 = await fileToB64(avatarFile);
+      await putFile("media/" + aname, ab64, "Add avatar: " + aname);
+      avatar = SITE + "media/" + aname;
+    }
+
     const title = $("#title").value.trim();
+    const tags = $("#tags").value.split(",").map(t => t.trim().toLowerCase()).filter(Boolean);
     const entry = {
-      id: "pick-" + slug(title || name).slice(0, 40) + "-" + Date.now().toString(36),
+      id: pending.id || ("pick-" + slug(title || src.split("/").pop()).slice(0, 40) + "-" + Date.now().toString(36)),
       type: pending.type,
-      src: SITE + "media/" + name,
+      src,
       title,
       credit: $("#credit").value.trim(),
       link: $("#link").value.trim()
     };
+    if (avatar) entry.avatar = avatar;
+    if (tags.length) entry.tags = tags;
     if (pending.w && pending.h) { entry.w = pending.w; entry.h = pending.h; }
     picks.unshift(entry);
-    pending = null;
-    $("#file-info").innerHTML = "";
-    ["#title", "#credit", "#link"].forEach(s => $(s).value = "");
-    $("#file").value = "";
-    status.innerHTML = '<span class="ok">Uploaded ✓ — now hit “Publish to everyone” below.</span>';
+    pending = null; avatarFile = null;
+    $("#file-info").innerHTML = ""; $("#avatar-chip").innerHTML = "";
+    ["#title", "#credit", "#link", "#tags", "#avatar-url"].forEach(s => $(s).value = "");
+    $("#file").value = ""; $("#avatar-file").value = "";
+    btn.textContent = "Upload & add to Collection";
+    status.innerHTML = '<span class="ok">Done ✓ — now hit “Publish to everyone” below.</span>';
     markDirty();
     renderList();
   } catch (e) {
-    status.innerHTML = '<span class="err">Upload failed: ' + e.message + '</span>';
+    status.innerHTML = '<span class="err">Failed: ' + e.message + '</span>';
     btn.disabled = false;
   }
 };
