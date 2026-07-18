@@ -12,16 +12,6 @@
       "h": 2048
     },
     {
-      "id": "pick-sample-1",
-      "type": "image",
-      "src": "https://picsum.photos/id/1015/900/1200",
-      "title": "Sample pick — replace me",
-      "credit": "Placeholder via picsum.photos",
-      "link": "https://picsum.photos",
-      "w": 900,
-      "h": 1200
-    },
-    {
       "id": "pick-sample-2",
       "type": "image",
       "src": "https://picsum.photos/id/1025/1200/800",
