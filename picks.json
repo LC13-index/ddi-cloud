@@ -12,16 +12,6 @@
       "h": 2048
     },
     {
-      "id": "pick-sample-2",
-      "type": "image",
-      "src": "https://picsum.photos/id/1025/1200/800",
-      "title": "Another sample — landscape ratio",
-      "credit": "Placeholder via picsum.photos",
-      "link": "https://picsum.photos",
-      "w": 1200,
-      "h": 800
-    },
-    {
       "id": "pick-sample-3",
       "type": "image",
       "src": "https://picsum.photos/id/1043/800/1000",
